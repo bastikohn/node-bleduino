@@ -89,22 +89,20 @@ Device.prototype._connectionEstablished = function(noblePeripheral) {
 
 	self.noblePeripheral = noblePeripheral;
 
-	self._loadServices(function(error, device) {
-		if(error) {
-			console.log(error);
+	self._loadServices(function(errorMessage, device) {
+		if(errorMessage) {
+			error(errorMessage);
 			return;
 		}
-		self._loadCharacteristics(function(error, device) {
-			if(error) {
-				console.log(error);
+		self._loadCharacteristics(function(errorMessage, device) {
+			if(errorMessage) {
+				error(errorMessage);
 				return;
 			}
 			self.characteristicsLoaded= true;
-			self._subscribeToNotificationCharacteristic(function(error, answer) {
-				self._handleNotification(error, answer);
-			});
+			self._subscribeToNotificationCharacteristic(self._handleNotification.bind(self));
 
-			console.log("Gerät (",self.uuid,") ist verbunden."); 
+			debug("Device ("+self.uuid+") has connected."); 
 			self.emit('connected');
 		});
 	});
@@ -112,8 +110,10 @@ Device.prototype._connectionEstablished = function(noblePeripheral) {
 
 Device.prototype._connectionLost = function() {
 	trace('Device._connectionLost');
+	debug('Lost connection to device', this.uuid);
 
 	this.isConnected = false;
+	this.characteristicsLoaded = false;
 	this.writeCharacteristic = null;
 	this.notifyCharacteristic = null;
 	this.events.emit('disconnected');
@@ -123,15 +123,26 @@ Device.prototype._loadServices = function(callback) {
 	trace('Device._loadServices');
 
 	if(!this.noblePeripheral) {
-		callback('Bleduino Gerät ist noch nicht verbunden.');
+		var errorMessage = 'Bleduino Gerät ist noch nicht verbunden.';
+		error(errorMessage);
+		callback(errorMessage);
 		return;
 	}
 
-	var device = this;
-	this.noblePeripheral.discoverServices(this.serviceUUIDs, function(error, services){
+	var self = this;
+	this.noblePeripheral.discoverServices(this.serviceUUIDs, function(errorMessage, services){
+		if(errorMessage) {
+			error(errorMessage);
+			callback(errorMessage);
+			return;
+		}
+		// Bleduino devices offer only a single service. If more services are found, then
+		// it is probably an unknown device.
 		if(services.length == 1) {
-			device.service = services[0];
-			callback(null, device);
+			self.service = services[0];
+			callback(null, self);
+		}else{
+			error('More then one service found. This is probably not an Bleduino device.');
 		}
 	});
 };
