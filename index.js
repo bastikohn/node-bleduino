@@ -151,7 +151,9 @@ Device.prototype._loadCharacteristics = function(callback) {
 	trace('Device._loadCharacteristics');
 
 	if(this.service == null || this.service === undefined) {
-		callback('Bleduino Service noch nicht geladen.');
+		var errorMessage = 'Bleduino Service is not loaded.';
+		error(errorMessage);
+		callback(errorMessage);
 		return;
 	}
 
