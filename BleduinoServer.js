@@ -5,7 +5,6 @@ var noble = require('noble'),
 	events = require('events'),
 	sleep = require('sleep'),
 	util = require('util'),
-	// Message = require('./Message.js'),
 	Device = require('./Device.js');
 
 

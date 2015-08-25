@@ -85,10 +85,10 @@ Device.prototype._connectionEstablished = function(noblePeripheral) {
 				error(errorMessage);
 				return;
 			}
-			self.characteristicsLoaded= true;
+			self.characteristicsLoaded = true;
 			self._subscribeToNotificationCharacteristic(self._handleNotification.bind(self));
 
-			debug("Device ("+self.uuid+") has connected."); 
+			debug("Device has connected.", self.uuid); 
 			self.emit('connected');
 		});
 	});
@@ -108,8 +108,8 @@ Device.prototype._connectionLost = function() {
 Device.prototype._loadServices = function(callback) {
 	trace('Device._loadServices');
 
-	if(!this.noblePeripheral) {
-		var errorMessage = 'Bleduino Gerät ist noch nicht verbunden.';
+	if(!this.isConnected) {
+		var errorMessage = 'Bleduino device is not yet connected.';
 		error(errorMessage);
 		callback(errorMessage);
 		return;
@@ -167,7 +167,7 @@ Device.prototype._loadCharacteristics = function(callback) {
 Device.prototype._subscribeToNotificationCharacteristic = function(callback) {
 	// Ist Notification Characteristic vorhanden?
 	if(this.notifyCharacteristic == undefined) {
-		var errorMessage = 'Notification Characteristic wurde noch nicht geladen.';
+		var errorMessage = 'Notification characteristic is not yet loaded.';
 		error(errorMessage);
 		callback(errorMessage);
 		return;
@@ -210,7 +210,7 @@ Device.prototype._sendNextPendingMessage = function() {
 	trace('Device._sendNextPendingMessage');
 
 	if(!this.isConnected) {
-		callback("Konnte keine Nachricht versenden. Bleduino ist nicht verbunden.");
+		error("Could not send next pending message. Device is disconnected.");
 		return;
 	}
 
@@ -244,7 +244,7 @@ Device.prototype._sendMessageRepeated = function(count, message) {
 	}
 
 	var trySendMessage = function() {
-		// If the maximum sendcount was reached, abort sending more messages.
+		// If the maximum sendcount was reached, abort.
 		if(sendCount++ > count) {
 			var errorMessage = "Could not send message after last try #" + count;
 			if(typeof message.callback === 'function') message.callback(errorMessage);
