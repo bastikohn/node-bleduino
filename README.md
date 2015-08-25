@@ -1,2 +1,2 @@
 # node-bleduino
-Nodejs Framework to comunicate to Elecfreaks' Bleduino
+Node.js framework to communicate with Elecfreaks' Bleduino
