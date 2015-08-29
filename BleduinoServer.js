@@ -71,6 +71,8 @@ BleduinoServer.prototype.start = function() {
 		self.emit('stopScanning');
 		debug('stopScanning');
 	});
+
+	return this;
 };
 
 BleduinoServer.prototype._startScanning = function() {
@@ -149,7 +151,7 @@ BleduinoServer.prototype.registeredDeviceWithUUID = function(uuid) {
 
 BleduinoServer.prototype.broadcastEvent = function(data) {
 	this.devices.forEach(function(device) {
-		device.emit("Event", data);
+		device.emit("event", data);
 	});
 }
 
