@@ -53,8 +53,6 @@ module.exports = function(bleduino){
 	WindowCoveringService.prototype.stop = function(callback) {
 		if(!this.device.isReadyToSendMessages()) {
 			callback("Device is not ready to send messages");
-		} else if(typeof value !== 'number') {
-			callback('Value is not a number');
 		} else {
 			this.device
 				.createMessage({

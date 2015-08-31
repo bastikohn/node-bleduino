@@ -1,7 +1,7 @@
-var	BleduinoServer = require('./BleduinoServer.js'),
+var	BleduinoServer = require('./lib/BleduinoServer.js'),
 	bleduino = new BleduinoServer();
-	LightBulbService = require('./LightBulbService.js')(bleduino),
-	WindowCoveringService = require('./WindowCoveringService.js')(bleduino);
+	LightBulbService = require('./services/LightBulbService.js')(bleduino),
+	WindowCoveringService = require('./services/WindowCoveringService.js')(bleduino);
 
 // Register serviceUUIDs
 bleduino.LightBulbService = LightBulbService;
